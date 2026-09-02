@@ -2,620 +2,252 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#111827">
-<title>电动车续航里程计算器</title>
+<title>电动车续航计算器 2.0</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",
+  "PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f3f4f6;
+  color:#111827;
 }
 
-body {
-  margin: 0;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    "PingFang SC",
-    "Microsoft YaHei",
-    sans-serif;
-  background: #f3f4f6;
-  color: #111827;
+.container{
+  width:min(100%,760px);
+  margin:auto;
+  padding:12px 14px 40px;
 }
 
-.container {
-  width: min(100%, 760px);
-  margin: 0 auto;
-  padding: 18px 14px 40px;
+.header{
+  text-align:center;
+  padding:18px 8px 22px;
 }
 
-.header {
-  text-align: center;
-  padding: 18px 8px 22px;
+.header h1{
+  margin:0;
+  font-size:29px;
+  font-weight:900;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 800;
+.header p{
+  margin:8px 0 0;
+  color:#6b7280;
+  font-size:14px;
 }
 
-.header p {
-  margin: 9px 0 0;
-  color: #6b7280;
-  font-size: 14px;
+.badge{
+  display:inline-block;
+  margin-top:10px;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#dbeafe;
+  color:#1d4ed8;
+  font-size:12px;
+  font-weight:700;
 }
 
-.card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 20px;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 18px rgba(0,0,0,.06);
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:14px;
+  box-shadow:0 4px 18px rgba(0,0,0,.06);
 }
 
-.card h2 {
-  margin: 0 0 18px;
-  font-size: 19px;
+.card h2{
+  margin:0 0 18px;
+  font-size:19px;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
 }
 
-.field {
-  min-width: 0;
+.field{
+  min-width:0;
 }
 
-.field.full {
-  grid-column: 1 / -1;
+.field.full{
+  grid-column:1/-1;
 }
 
-label {
-  display: block;
-  margin-bottom: 7px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
+label{
+  display:block;
+  margin-bottom:7px;
+  font-size:14px;
+  font-weight:700;
+  color:#374151;
 }
 
-.input-wrap {
-  position: relative;
+.input-wrap{
+  position:relative;
 }
 
-input {
-  width: 100%;
-  height: 50px;
-  padding: 0 58px 0 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  background: #fff;
-  color: #111827;
-  font-size: 17px;
-  outline: none;
+input,
+select{
+  width:100%;
+  height:50px;
+  padding:0 58px 0 14px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  background:#fff;
+  color:#111827;
+  font-size:17px;
+  outline:none;
 }
 
-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+select{
+  padding-right:14px;
 }
 
-.unit {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
-  font-size: 13px;
-  pointer-events: none;
+input:focus,
+select:focus{
+  border-color:#2563eb;
+  box-shadow:0 0 0 3px rgba(37,99,235,.12);
 }
 
-.range-box {
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 14px;
-  background: #f9fafb;
+.unit{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#6b7280;
+  font-size:13px;
+  pointer-events:none;
 }
 
-.range-box input {
-  padding-right: 14px;
+.quick{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px;
 }
 
-.buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
+.quick button{
+  flex:0 0 auto;
+  min-height:38px;
+  padding:0 13px;
+  font-size:13px;
+  background:#f3f4f6;
+  color:#374151;
 }
 
-button {
-  flex: 1;
-  min-height: 48px;
-  border: 0;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
+.buttons{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
 }
 
-.primary {
-  background: #2563eb;
-  color: white;
+button{
+  flex:1;
+  min-height:48px;
+  border:0;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
 }
 
-.secondary {
-  background: #e5e7eb;
-  color: #374151;
+button:active{
+  transform:scale(.99);
 }
 
-.result-main {
-  text-align: center;
-  padding: 8px 0 18px;
+.primary{
+  background:#2563eb;
+  color:#fff;
 }
 
-.result-label {
-  color: #6b7280;
-  font-size: 14px;
+.secondary{
+  background:#e5e7eb;
+  color:#374151;
 }
 
-.range-value {
-  margin: 5px 0;
-  font-size: 52px;
-  line-height: 1.1;
-  font-weight: 900;
-  color: #2563eb;
+.result-main{
+  text-align:center;
+  padding:5px 0 18px;
 }
 
-.range-unit {
-  color: #6b7280;
-  font-size: 16px;
+.result-label{
+  color:#6b7280;
+  font-size:14px;
 }
 
-.results {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+.range-value{
+  margin:4px 0;
+  font-size:52px;
+  line-height:1.1;
+  font-weight:900;
+  color:#2563eb;
 }
 
-.result-item {
-  padding: 15px;
-  background: #f9fafb;
-  border-radius: 14px;
+.range-unit{
+  color:#6b7280;
+  font-size:16px;
 }
 
-.result-item .name {
-  color: #6b7280;
-  font-size: 13px;
-  margin-bottom: 5px;
+.results{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
-.result-item .value {
-  font-size: 21px;
-  font-weight: 800;
+.result-item{
+  padding:14px;
+  background:#f9fafb;
+  border-radius:14px;
 }
 
-.formula {
-  padding: 14px;
-  background: #eff6ff;
-  border-radius: 13px;
-  color: #1e40af;
-  font-size: 14px;
-  line-height: 1.7;
+.result-item .name{
+  color:#6b7280;
+  font-size:13px;
+  margin-bottom:5px;
 }
 
-.tip {
-  color: #6b7280;
-  font-size: 13px;
-  line-height: 1.7;
+.result-item .value{
+  font-size:20px;
+  font-weight:850;
 }
 
-.error {
-  display: none;
-  margin-top: 12px;
-  padding: 11px 13px;
-  border-radius: 10px;
-  background: #fef2f2;
-  color: #b91c1c;
-  font-size: 13px;
+.formula,
+.notice{
+  padding:14px;
+  border-radius:13px;
+  font-size:14px;
+  line-height:1.7;
 }
 
-.footer {
-  text-align: center;
-  padding: 10px;
-  color: #9ca3af;
-  font-size: 12px;
+.formula{
+  background:#eff6ff;
+  color:#1e40af;
 }
 
-@media (max-width: 520px) {
-  .container {
-    padding: 10px 10px 30px;
-  }
-
-  .header h1 {
-    font-size: 25px;
-  }
-
-  .card {
-    padding: 16px;
-    border-radius: 15px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .field.full {
-    grid-column: auto;
-  }
-
-  .range-value {
-    font-size: 46px;
-  }
-
-  .results {
-    grid-template-columns: 1fr 1fr;
-  }
+.notice{
+  background:#f0fdf4;
+  color:#166534;
 }
 
-@media (max-width: 350px) {
-  .results {
-    grid-template-columns: 1fr;
-  }
-
-  .buttons {
-    flex-direction: column;
-  }
+.error{
+  display:none;
+  margin-top:12px;
+  padding:11px 13px;
+  border-radius:10px;
+  background:#fef2f2;
+  color:#b91c1c;
+  font-size:13px;
 }
-</style>
-</head>
 
-<body>
-
-<div class="container">
-
-  <header class="header">
-    <h1>🔋 电动车续航计算器</h1>
-    <p>根据电池容量与实际能耗估算真实续航</p>
-  </header>
-
-  <section class="card">
-
-    <h2>🔋 电池参数</h2>
-
-    <div class="form-grid">
-
-      <div class="field">
-        <label for="voltage">电池电压</label>
-        <div class="input-wrap">
-          <input id="voltage" type="number" value="72" min="1" max="1000" step="0.1">
-          <span class="unit">V</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="capacity">电池容量</label>
-        <div class="input-wrap">
-          <input id="capacity" type="number" value="50" min="0.1" max="1000" step="0.1">
-          <span class="unit">Ah</span>
-        </div>
-      </div>
-
-      <div class="field full">
-        <label for="usable">电池可用比例</label>
-        <div class="input-wrap">
-          <input id="usable" type="number" value="90" min="1" max="100" step="1">
-          <span class="unit">%</span>
-        </div>
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section class="card">
-
-    <h2>🛵 骑行参数</h2>
-
-    <div class="form-grid">
-
-      <div class="field">
-        <label for="motor">电机功率</label>
-        <div class="input-wrap">
-          <input id="motor" type="number" value="1500" min="1" max="100000" step="50">
-          <span class="unit">W</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="speed">平均速度</label>
-        <div class="input-wrap">
-          <input id="speed" type="number" value="50" min="1" max="300" step="1">
-          <span class="unit">km/h</span>
-        </div>
-      </div>
-
-      <div class="field full">
-        <label for="consumption">实际平均能耗</label>
-        <div class="input-wrap">
-          <input id="consumption" type="number" value="35" min="1" max="1000" step="0.1">
-          <span class="unit">Wh/km</span>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="error" id="error"></div>
-
-    <div class="buttons">
-      <button class="primary" id="calculate">立即计算</button>
-      <button class="secondary" id="reset">恢复默认</button>
-    </div>
-
-  </section>
-
-
-  <section class="card">
-
-    <h2>📊 计算结果</h2>
-
-    <div class="result-main">
-      <div class="result-label">预计续航</div>
-      <div class="range-value" id="range">—</div>
-      <div class="range-unit">公里</div>
-    </div>
-
-    <div class="results">
-
-      <div class="result-item">
-        <div class="name">⚡ 电池总能量</div>
-        <div class="value" id="totalEnergy">—</div>
-      </div>
-
-      <div class="result-item">
-        <div class="name">🔋 可用电量</div>
-        <div class="value" id="usableEnergy">—</div>
-      </div>
-
-      <div class="result-item">
-        <div class="name">⏱️ 理论骑行时间</div>
-        <div class="value" id="rideTime">—</div>
-      </div>
-
-      <div class="result-item">
-        <div class="name">⚡ 平均耗电功率</div>
-        <div class="value" id="avgPower">—</div>
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section class="card">
-
-    <h2>🧮 计算公式</h2>
-
-    <div class="formula">
-      电池总能量 = 电压 × 容量<br>
-      可用电量 = 电池总能量 × 可用比例<br>
-      预计续航 = 可用电量 ÷ 实际能耗<br>
-      理论骑行时间 = 预计续航 ÷ 平均速度<br>
-      平均耗电功率 = 实际能耗 × 平均速度
-    </div>
-
-  </section>
-
-
-  <section class="card">
-
-    <h2>💡 使用说明</h2>
-
-    <div class="tip">
-      <strong>实际平均能耗 Wh/km</strong> 是影响续航计算准确度最重要的参数。
-      如果你知道自己的实际能耗，优先填写实测值。
-      <br><br>
-      例如：72V 50Ah 电池，理论电量约为 3.6kWh。
-      如果设置 90% 可用电量，则实际可使用约 3.24kWh。
-      如果车辆实际能耗为 35Wh/km，预计续航约为 92.6km。
-      <br><br>
-      实际续航还会受到速度、风阻、载重、胎压、温度、路况、
-      电池老化以及驾驶方式等因素影响。
-    </div>
-
-  </section>
-
-
-  <footer class="footer">
-    电动车续航里程计算器 · Electric Range Calculator
-  </footer>
-
-</div>
-
-
-<script>
-(function () {
-
-  const voltage = document.getElementById("voltage");
-  const capacity = document.getElementById("capacity");
-  const usable = document.getElementById("usable");
-  const motor = document.getElementById("motor");
-  const speed = document.getElementById("speed");
-  const consumption = document.getElementById("consumption");
-
-  const range = document.getElementById("range");
-  const totalEnergy = document.getElementById("totalEnergy");
-  const usableEnergy = document.getElementById("usableEnergy");
-  const rideTime = document.getElementById("rideTime");
-  const avgPower = document.getElementById("avgPower");
-
-  const error = document.getElementById("error");
-
-  const calculateButton = document.getElementById("calculate");
-  const resetButton = document.getElementById("reset");
-
-  const defaults = {
-    voltage: 72,
-    capacity: 50,
-    usable: 90,
-    motor: 1500,
-    speed: 50,
-    consumption: 35
-  };
-
-  function getNumber(input) {
-    return Number.parseFloat(input.value);
-  }
-
-  function showError(message) {
-    error.textContent = message;
-    error.style.display = "block";
-  }
-
-  function hideError() {
-    error.textContent = "";
-    error.style.display = "none";
-  }
-
-  function formatNumber(number, digits = 1) {
-    return number.toLocaleString("zh-CN", {
-      minimumFractionDigits: digits,
-      maximumFractionDigits: digits
-    });
-  }
-
-  function calculate() {
-
-    hideError();
-
-    const v = getNumber(voltage);
-    const ah = getNumber(capacity);
-    const usablePercent = getNumber(usable);
-    const motorPower = getNumber(motor);
-    const averageSpeed = getNumber(speed);
-    const whPerKm = getNumber(consumption);
-
-    if (
-      !Number.isFinite(v) ||
-      !Number.isFinite(ah) ||
-      !Number.isFinite(usablePercent) ||
-      !Number.isFinite(motorPower) ||
-      !Number.isFinite(averageSpeed) ||
-      !Number.isFinite(whPerKm)
-    ) {
-      showError("请把所有参数填写完整。");
-      return;
-    }
-
-    if (v <= 0 || ah <= 0 || motorPower <= 0 ||
-        averageSpeed <= 0 || whPerKm <= 0) {
-      showError("参数必须大于 0。");
-      return;
-    }
-
-    if (usablePercent <= 0 || usablePercent > 100) {
-      showError("电池可用比例必须在 1%～100% 之间。");
-      return;
-    }
-
-    /*
-      电池总能量：
-      V × Ah = Wh
-    */
-    const totalWh = v * ah;
-
-    /*
-      可用电量
-    */
-    const usableWh = totalWh * usablePercent / 100;
-
-    /*
-      续航：
-      Wh ÷ Wh/km = km
-    */
-    const estimatedRange = usableWh / whPerKm;
-
-    /*
-      骑行时间：
-      km ÷ km/h = h
-    */
-    const hours = estimatedRange / averageSpeed;
-
-    /*
-      平均耗电功率：
-      Wh/km × km/h = W
-    */
-    const averagePower = whPerKm * averageSpeed;
-
-    range.textContent = formatNumber(estimatedRange, 1);
-
-    totalEnergy.textContent =
-      formatNumber(totalWh / 1000, 2) + " kWh";
-
-    usableEnergy.textContent =
-      formatNumber(usableWh / 1000, 2) + " kWh";
-
-    const hoursPart = Math.floor(hours);
-    const minutesPart = Math.round((hours - hoursPart) * 60);
-
-    let timeText = "";
-
-    if (hoursPart > 0) {
-      timeText += hoursPart + " 小时";
-    }
-
-    if (minutesPart > 0) {
-      timeText += (timeText ? " " : "") + minutesPart + " 分钟";
-    }
-
-    if (!timeText) {
-      timeText = "不足 1 分钟";
-    }
-
-    rideTime.textContent = timeText;
-
-    avgPower.textContent =
-      formatNumber(averagePower, 0) + " W";
-
-  }
-
-
-  function reset() {
-
-    voltage.value = defaults.voltage;
-    capacity.value = defaults.capacity;
-    usable.value = defaults.usable;
-    motor.value = defaults.motor;
-    speed.value = defaults.speed;
-    consumption.value = defaults.consumption;
-
-    calculate();
-  }
-
-
-  calculateButton.addEventListener("click", calculate);
-
-  resetButton.addEventListener("click", reset);
-
-  [
-    voltage,
-    capacity,
-    usable,
-    motor,
-    speed,
-    consumption
-  ].forEach(function (input) {
-
-    input.addEventListener("input", calculate);
-
-  });
-
-  calculate();
-
-})();
-</script>
-
-</body>
-</html>
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13
