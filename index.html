@@ -5,249 +5,770 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#111827">
 <title>电动车续航计算器 2.0</title>
-
 <style>
 *{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f3f4f6;color:#111827}
+.container{width:min(100%,760px);margin:auto;padding:12px 14px 40px}
+.header{text-align:center;padding:18px 8px 22px}
+.header h1{margin:0;font-size:29px;font-weight:900}
+.header p{margin:8px 0 0;color:#6b7280;font-size:14px}
+.badge{display:inline-block;margin-top:10px;padding:5px 10px;border-radius:999px;background:#dbeafe;color:#1d4ed8;font-size:12px;font-weight:700}
+.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:14px;box-shadow:0 4px 18px rgba(0,0,0,.06)}
+.card h2{margin:0 0 18px;font-size:19px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{min-width:0}.field.full{grid-column:1/-1}
+label{display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#374151}
+.input-wrap{position:relative}
+input,select{width:100%;height:50px;padding:0 58px 0 14px;border:1px solid #d1d5db;border-radius:12px;background:#fff;color:#111827;font-size:17px;outline:none}
+select{padding-right:14px}
+input:focus,select:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#6b7280;font-size:13px;pointer-events:none}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.quick button{flex:0 0 auto;min-height:38px;padding:0 13px;font-size:13px;background:#f3f4f6;color:#374151}
+.buttons{display:flex;gap:10px;margin-top:18px}
+button{flex:1;min-height:48px;border:0;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer}
+button:active{transform:scale(.99)}
+.primary{background:#2563eb;color:#fff}
+.secondary{background:#e5e7eb;color:#374151}
+.result-main{text-align:center;padding:5px 0 18px}
+.result-label{color:#6b7280;font-size:14px}
+.range-value{margin:4px 0;font-size:52px;line-height:1.1;font-weight:900;color:#2563eb}
+.range-unit{color:#6b7280;font-size:16px}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result-item{padding:14px;background:#f9fafb;border-radius:14px}
+.result-item .name{color:#6b7280;font-size:13px;margin-bottom:5px}
+.result-item .value{font-size:20px;font-weight:850}
+.formula,.notice{padding:14px;border-radius:13px;font-size:14px;line-height:1.7}
+.formula{background:#eff6ff;color:#1e40af}
+.notice{background:#f0fdf4;color:#166534}
+.error{display:none;margin-top:12px;padding:11px 13px;border-radius:10px;background:#fef2f2;color:#b91c1c;font-size:13px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 7px;text-align:center;border-bottom:1px solid #e5e7eb;white-space:nowrap}
+th{color:#6b7280;font-weight:700}
+td{font-weight:750}
+.highlight{background:#eff6ff}
+.estimate-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.estimate-box{padding:14px;border-radius:14px;background:#f9fafb}
+.estimate-box .small{font-size:12px;color:#6b7280}
+.estimate-box strong{display:block;font-size:22px;margin-top:4px}
+.footer{text-align:center;padding:10px;color:#9ca3af;font-size:12px}
+.hidden{display:none}
 
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",
-  "PingFang SC","Microsoft YaHei",sans-serif;
-  background:#f3f4f6;
-  color:#111827;
+@media(max-width:520px){
+ .container{padding:8px 10px 30px}
+ .header h1{font-size:25px}
+ .card{padding:16px;border-radius:15px}
+ .form-grid{grid-template-columns:1fr}
+ .field.full{grid-column:auto}
+ .range-value{font-size:46px}
+ .results{grid-template-columns:1fr 1fr}
+ .estimate-grid{grid-template-columns:1fr 1fr}
 }
 
-.container{
-  width:min(100%,760px);
-  margin:auto;
-  padding:12px 14px 40px;
+@media(max-width:350px){
+ .results,.estimate-grid{grid-template-columns:1fr}
+ .buttons{flex-direction:column}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="header">
+<h1>🔋 电动车续航计算器</h1>
+<p>真实能耗 · 剩余续航 · 速度对比 · 实测反推</p>
+<div class="badge">VERSION 2.0</div>
+</header>
+
+<section class="card">
+<h2>🔋 电池参数</h2>
+
+<div class="form-grid">
+
+<div class="field">
+<label>电池电压</label>
+<div class="input-wrap">
+<input id="voltage" type="number" value="72" min="1" step=".1">
+<span class="unit">V</span>
+</div>
+</div>
+
+<div class="field">
+<label>电池容量</label>
+<div class="input-wrap">
+<input id="capacity" type="number" value="50" min=".1" step=".1">
+<span class="unit">Ah</span>
+</div>
+</div>
+
+<div class="field">
+<label>电池可用比例</label>
+<div class="input-wrap">
+<input id="usable" type="number" value="90" min="1" max="100" step="1">
+<span class="unit">%</span>
+</div>
+</div>
+
+<div class="field">
+<label>电池类型</label>
+<select id="batteryType">
+<option value="lithium">锂电池</option>
+<option value="lead">铅酸电池</option>
+</select>
+</div>
+
+</div>
+
+<div class="quick">
+<button type="button" onclick="preset(48,20,90,1000,35,35)">48V 20Ah</button>
+<button type="button" onclick="preset(60,30,90,1500,45,38)">60V 30Ah</button>
+<button type="button" onclick="preset(72,30,90,1500,50,35)">72V 30Ah</button>
+<button type="button" onclick="preset(72,50,90,1500,50,35)">我的 M95C</button>
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>🛵 骑行参数</h2>
+
+<div class="form-grid">
+
+<div class="field">
+<label>电机功率</label>
+<div class="input-wrap">
+<input id="motor" type="number" value="1500" min="1" step="50">
+<span class="unit">W</span>
+</div>
+</div>
+
+<div class="field">
+<label>平均速度</label>
+<div class="input-wrap">
+<input id="speed" type="number" value="50" min="1" step="1">
+<span class="unit">km/h</span>
+</div>
+</div>
+
+<div class="field full">
+<label>实际平均能耗</label>
+<div class="input-wrap">
+<input id="consumption" type="number" value="35" min="1" step=".1">
+<span class="unit">Wh/km</span>
+</div>
+</div>
+
+</div>
+
+<div class="error" id="error"></div>
+
+<div class="buttons">
+<button class="primary" onclick="calculate()">立即计算</button>
+<button class="secondary" onclick="resetAll()">恢复默认</button>
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>📊 核心结果</h2>
+
+<div class="result-main">
+<div class="result-label">预计满电续航</div>
+<div class="range-value" id="range">—</div>
+<div class="range-unit">公里</div>
+</div>
+
+<div class="results">
+
+<div class="result-item">
+<div class="name">⚡ 电池总能量</div>
+<div class="value" id="totalEnergy">—</div>
+</div>
+
+<div class="result-item">
+<div class="name">🔋 可用电量</div>
+<div class="value" id="usableEnergy">—</div>
+</div>
+
+<div class="result-item">
+<div class="name">⏱️ 理论骑行时间</div>
+<div class="value" id="rideTime">—</div>
+</div>
+
+<div class="result-item">
+<div class="name">⚡ 平均耗电功率</div>
+<div class="value" id="avgPower">—</div>
+</div>
+
+</div>
+</section>
+
+<section class="card">
+
+<h2>🔋 剩余电量还能跑多远</h2>
+
+<div class="field">
+
+<label>当前剩余电量</label>
+
+<div class="input-wrap">
+<input id="soc" type="number" value="50" min="0" max="100" step="1">
+<span class="unit">%</span>
+</div>
+
+</div>
+
+<div class="estimate-grid" style="margin-top:12px">
+
+<div class="estimate-box">
+<div class="small">剩余可用电量</div>
+<strong id="remainingEnergy">—</strong>
+</div>
+
+<div class="estimate-box">
+<div class="small">预计还能行驶</div>
+<strong id="remainingRange">—</strong>
+</div>
+
+</div>
+
+<div class="notice" style="margin-top:12px">
+这里按当前填写的实际能耗计算。如果你现在是 50% 电量，就可以直接看到剩余续航。
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>📈 不同速度续航对比</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>平均速度</th>
+<th>估算能耗</th>
+<th>预计续航</th>
+<th>理论时间</th>
+</tr>
+</thead>
+
+<tbody id="speedTable"></tbody>
+
+</table>
+
+</div>
+
+<div class="notice" style="margin-top:12px">
+速度越高，风阻通常增长明显。这里用当前实测能耗作为基准，并按速度变化进行近似估算，仅用于比较趋势。
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>🧪 实测能耗反推</h2>
+
+<div class="form-grid">
+
+<div class="field">
+<label>本次实际行驶距离</label>
+<div class="input-wrap">
+<input id="testKm" type="number" value="20" min=".1" step=".1">
+<span class="unit">km</span>
+</div>
+</div>
+
+<div class="field">
+<label>消耗电量</label>
+<div class="input-wrap">
+<input id="testSoc" type="number" value="40" min=".1" max="100" step=".1">
+<span class="unit">% 电量</span>
+</div>
+</div>
+
+</div>
+
+<div class="estimate-grid" style="margin-top:12px">
+
+<div class="estimate-box">
+<div class="small">反推实际能耗</div>
+<strong id="actualWh">—</strong>
+</div>
+
+<div class="estimate-box">
+<div class="small">按此能耗满电续航</div>
+<strong id="actualRange">—</strong>
+</div>
+
+</div>
+
+<div class="buttons">
+<button class="primary" onclick="applyMeasured()">一键应用实测能耗</button>
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>💰 充电与用车成本</h2>
+
+<div class="form-grid">
+
+<div class="field">
+<label>电价</label>
+<div class="input-wrap">
+<input id="price" type="number" value="0.6" min="0" step=".01">
+<span class="unit">元/kWh</span>
+</div>
+</div>
+
+<div class="field">
+<label>每天骑行距离</label>
+<div class="input-wrap">
+<input id="dailyKm" type="number" value="30" min="0" step="1">
+<span class="unit">km</span>
+</div>
+</div>
+
+</div>
+
+<div class="estimate-grid" style="margin-top:12px">
+
+<div class="estimate-box">
+<div class="small">每100公里电费</div>
+<strong id="cost100">—</strong>
+</div>
+
+<div class="estimate-box">
+<div class="small">每天预计电费</div>
+<strong id="dailyCost">—</strong>
+</div>
+
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>🧮 计算公式</h2>
+
+<div class="formula">
+
+电池总能量 = 电压 × 容量<br>
+可用电量 = 电池总能量 × 可用比例<br>
+预计续航 = 可用电量 ÷ 实际能耗<br>
+剩余续航 = 电池总能量 × 可用比例 × 当前电量 ÷ 实际能耗<br>
+实测能耗 = 消耗电量 × 电池总能量 ÷ 实际行驶距离
+
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>💡 使用说明</h2>
+
+<div class="notice">
+
+<strong>最准确的方法是用自己的实测能耗。</strong>
+<br><br>
+
+例如你的 72V 50Ah 电池，理论电量约 3.6kWh；设置 90% 可用电量就是约 3.24kWh。如果实测能耗 35Wh/km，满电理论续航约 92.6km。
+
+<br><br>
+
+实测反推时，例如跑 20km 消耗 40% 电量，系统会自动计算你的实际 Wh/km，并可一键应用。
+
+<br><br>
+
+实际续航还会受到速度、风阻、载重、胎压、温度、路况、电池老化、控制器效率和驾驶方式影响。
+
+</div>
+
+</section>
+
+<footer class="footer">
+电动车续航计算器 2.0 · Electric Range Calculator
+</footer>
+
+</div>
+
+<script>
+
+const ids=[
+"voltage",
+"capacity",
+"usable",
+"motor",
+"speed",
+"consumption",
+"soc",
+"testKm",
+"testSoc",
+"price",
+"dailyKm"
+];
+
+const $=id=>document.getElementById(id);
+
+const defaults={
+voltage:72,
+capacity:50,
+usable:90,
+motor:1500,
+speed:50,
+consumption:35,
+soc:50,
+testKm:20,
+testSoc:40,
+price:.6,
+dailyKm:30
+};
+
+function n(id){
+return parseFloat($(id).value);
 }
 
-.header{
-  text-align:center;
-  padding:18px 8px 22px;
+function fmt(x,d=1){
+return Number(x).toLocaleString("zh-CN",{
+minimumFractionDigits:d,
+maximumFractionDigits:d
+});
 }
 
-.header h1{
-  margin:0;
-  font-size:29px;
-  font-weight:900;
+function err(msg){
+$("error").textContent=msg;
+$("error").style.display="block";
 }
 
-.header p{
-  margin:8px 0 0;
-  color:#6b7280;
-  font-size:14px;
+function clearErr(){
+$("error").style.display="none";
 }
 
-.badge{
-  display:inline-block;
-  margin-top:10px;
-  padding:5px 10px;
-  border-radius:999px;
-  background:#dbeafe;
-  color:#1d4ed8;
-  font-size:12px;
-  font-weight:700;
+function getData(){
+
+const v=n("voltage");
+const ah=n("capacity");
+const u=n("usable");
+const motor=n("motor");
+const s=n("speed");
+const c=n("consumption");
+
+if([v,ah,u,motor,s,c].some(x=>!Number.isFinite(x)))
+throw "请把所有参数填写完整。";
+
+if([v,ah,motor,s,c].some(x=>x<=0))
+throw "电压、容量、电机、速度和能耗必须大于 0。";
+
+if(u<=0||u>100)
+throw "电池可用比例必须在 1%～100% 之间。";
+
+return {
+v,
+ah,
+u,
+motor,
+s,
+c,
+totalWh:v*ah,
+usableWh:v*ah*u/100
+};
+
 }
 
-.card{
-  background:#fff;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:14px;
-  box-shadow:0 4px 18px rgba(0,0,0,.06);
+function calculate(){
+
+try{
+
+clearErr();
+
+const d=getData();
+
+const range=d.usableWh/d.c;
+
+const power=d.c*d.s;
+
+const hours=range/d.s;
+
+$("range").textContent=fmt(range);
+
+$("totalEnergy").textContent=
+fmt(d.totalWh/1000,2)+" kWh";
+
+$("usableEnergy").textContent=
+fmt(d.usableWh/1000,2)+" kWh";
+
+$("rideTime").textContent=
+fmtTime(hours);
+
+$("avgPower").textContent=
+fmt(power)+" W";
+
+const soc=Math.max(
+0,
+Math.min(100,n("soc")||0)
+);
+
+$("remainingEnergy").textContent=
+fmt(d.usableWh*soc/100,2)+" kWh";
+
+$("remainingRange").textContent=
+fmt(range*soc/100)+" km";
+
+buildSpeedTable(d);
+
+buildMeasured(d);
+
+buildCost(d);
+
+save();
+
+}catch(e){
+
+err(e);
+
 }
 
-.card h2{
-  margin:0 0 18px;
-  font-size:19px;
 }
 
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
+function fmtTime(h){
+
+const hours=Math.floor(h);
+
+const mins=Math.round((h-hours)*60);
+
+if(hours===0)
+return mins+" 分钟";
+
+if(mins===60)
+return (hours+1)+" 小时";
+
+return hours+" 小时 "+mins+" 分钟";
+
 }
 
-.field{
-  min-width:0;
+function speedConsumption(base,baseSpeed,s){
+
+const ratio=s/baseSpeed;
+
+return base*(.4+.6*ratio*ratio);
+
 }
 
-.field.full{
-  grid-column:1/-1;
+function buildSpeedTable(d){
+
+const speeds=[30,40,50,60,70];
+
+$("speedTable").innerHTML=
+
+speeds.map(s=>{
+
+const c=
+speedConsumption(d.c,d.s,s);
+
+const r=
+d.usableWh/c;
+
+const t=
+r/s;
+
+const cls=
+Math.abs(s-d.s)<.01
+?" class=\"highlight\""
+:"";
+
+return `<tr${cls}>
+<td>${s} km/h</td>
+<td>${fmt(c,1)} Wh/km</td>
+<td>${fmt(r)} km</td>
+<td>${fmtTime(t)}</td>
+</tr>`;
+
+}).join("");
+
 }
 
-label{
-  display:block;
-  margin-bottom:7px;
-  font-size:14px;
-  font-weight:700;
-  color:#374151;
+function buildMeasured(d){
+
+const km=n("testKm");
+
+const soc=n("testSoc");
+
+if(
+!Number.isFinite(km)||
+!Number.isFinite(soc)||
+km<=0||
+soc<=0
+){
+
+$("actualWh").textContent="—";
+
+$("actualRange").textContent="—";
+
+return;
+
 }
 
-.input-wrap{
-  position:relative;
+const whPerKm=
+d.totalWh*(soc/100)/km;
+
+const range=
+d.usableWh/whPerKm;
+
+$("actualWh").textContent=
+fmt(whPerKm,1)+" Wh/km";
+
+$("actualRange").textContent=
+fmt(range)+" km";
+
 }
 
-input,
-select{
-  width:100%;
-  height:50px;
-  padding:0 58px 0 14px;
-  border:1px solid #d1d5db;
-  border-radius:12px;
-  background:#fff;
-  color:#111827;
-  font-size:17px;
-  outline:none;
+function applyMeasured(){
+
+try{
+
+const d=getData();
+
+const km=n("testKm");
+
+const soc=n("testSoc");
+
+if(
+!Number.isFinite(km)||
+!Number.isFinite(soc)||
+km<=0||
+soc<=0||
+soc>100
+)
+
+throw "请输入有效的行驶距离和消耗电量。";
+
+const wh=
+d.totalWh*(soc/100)/km;
+
+$("consumption").value=
+wh.toFixed(1);
+
+calculate();
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}catch(e){
+
+err(e);
+
 }
 
-select{
-  padding-right:14px;
 }
 
-input:focus,
-select:focus{
-  border-color:#2563eb;
-  box-shadow:0 0 0 3px rgba(37,99,235,.12);
+function buildCost(d){
+
+const price=
+Math.max(0,n("price")||0);
+
+const daily=
+Math.max(0,n("dailyKm")||0);
+
+$("cost100").textContent=
+fmt(d.c/1000*100*price,2)+" 元";
+
+$("dailyCost").textContent=
+fmt(d.c/1000*daily*price,2)+" 元";
+
 }
 
-.unit{
-  position:absolute;
-  right:14px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#6b7280;
-  font-size:13px;
-  pointer-events:none;
+function preset(v,ah,u,m,s,c){
+
+$("voltage").value=v;
+
+$("capacity").value=ah;
+
+$("usable").value=u;
+
+$("motor").value=m;
+
+$("speed").value=s;
+
+$("consumption").value=c;
+
+calculate();
+
 }
 
-.quick{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:12px;
+function resetAll(){
+
+for(const id of ids)
+$(id).value=defaults[id];
+
+calculate();
+
 }
 
-.quick button{
-  flex:0 0 auto;
-  min-height:38px;
-  padding:0 13px;
-  font-size:13px;
-  background:#f3f4f6;
-  color:#374151;
+function save(){
+
+const data={};
+
+ids.forEach(id=>{
+data[id]=$(id).value;
+});
+
+try{
+
+localStorage.setItem(
+"evRangeCalculator2",
+JSON.stringify(data)
+);
+
+}catch(e){}
+
 }
 
-.buttons{
-  display:flex;
-  gap:10px;
-  margin-top:18px;
+function load(){
+
+try{
+
+const x=
+JSON.parse(
+localStorage.getItem("evRangeCalculator2")||"null"
+);
+
+if(x){
+
+ids.forEach(id=>{
+
+if(x[id]!==undefined)
+$(id).value=x[id];
+
+});
+
 }
 
-button{
-  flex:1;
-  min-height:48px;
-  border:0;
-  border-radius:12px;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
+}catch(e){}
+
 }
 
-button:active{
-  transform:scale(.99);
-}
+ids.forEach(id=>
+$(id).addEventListener(
+"input",
+calculate
+)
+);
 
-.primary{
-  background:#2563eb;
-  color:#fff;
-}
+load();
 
-.secondary{
-  background:#e5e7eb;
-  color:#374151;
-}
+calculate();
 
-.result-main{
-  text-align:center;
-  padding:5px 0 18px;
-}
+</script>
 
-.result-label{
-  color:#6b7280;
-  font-size:14px;
-}
-
-.range-value{
-  margin:4px 0;
-  font-size:52px;
-  line-height:1.1;
-  font-weight:900;
-  color:#2563eb;
-}
-
-.range-unit{
-  color:#6b7280;
-  font-size:16px;
-}
-
-.results{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.result-item{
-  padding:14px;
-  background:#f9fafb;
-  border-radius:14px;
-}
-
-.result-item .name{
-  color:#6b7280;
-  font-size:13px;
-  margin-bottom:5px;
-}
-
-.result-item .value{
-  font-size:20px;
-  font-weight:850;
-}
-
-.formula,
-.notice{
-  padding:14px;
-  border-radius:13px;
-  font-size:14px;
-  line-height:1.7;
-}
-
-.formula{
-  background:#eff6ff;
-  color:#1e40af;
-}
-
-.notice{
-  background:#f0fdf4;
-  color:#166534;
-}
-
-.error{
-  display:none;
-  margin-top:12px;
-  padding:11px 13px;
-  border-radius:10px;
-  background:#fef2f2;
-  color:#b91c1c;
-  font-size:13px;
-}
-
-.table-wrap{
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13
+</body>
+</html>
